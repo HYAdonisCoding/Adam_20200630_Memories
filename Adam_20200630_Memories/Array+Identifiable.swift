@@ -9,12 +9,12 @@
 import Foundation
 
 extension Array where Element: Identifiable {
-    func firstIndex(matching: Element) -> Int {
+    func firstIndex(matching: Element) -> Int? {
         for cardIndex in 0..<self.count {
             if self[cardIndex].id == matching.id {
                 return cardIndex
             }
         }
-        return 0 // TODO: bogus!
+        return nil
     }
 }
