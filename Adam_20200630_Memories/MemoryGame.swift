@@ -47,14 +47,72 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
             cards.append(Card(id: pairOfIndex*2, content: content))
             cards.append(Card(id: pairOfIndex*2+1, content: content))
         }
+        cards.shuffle()
     }
     
     struct Card: Identifiable {
         var id: Int
         
-        var isFaceUp: Bool = false
+        var isFaceUp: Bool = false {
+            didSet {
+                if isFaceUp {
+                    
+                } else {
+                    
+                }
+            }
+        }
         var isMatched: Bool = false
         var content: CardContent
+        
+        
+        // MARK: - bonus time
+        
+        
+        
+        
+        
+        
+        var bonusTimeRemaining: TimeInterval {
+            max(0, bonusTimeLimit - faceUpTime)
+        }
+        
+        var bonusTimeLimit: TimeInterval = 6
+        
+        var faceUpTime: TimeInterval {
+            if let lastFaceUpDate = self.lastFaceUpDate {
+                return pastFaceUpTime + Date().timeIntervalSince(lastFaceUpDate)
+            } else {
+                return pastFaceUpTime
+            }
+        }
+        var lastFaceUpDate: Date?
+        
+        var pastFaceUpTime: TimeInterval = 0
+        
+        var bonusRemaining: Double {
+            (bonusTimeLimit > 0 && bonusTimeRemaining > 0) ? bonusTimeRemaining/bonusTimeLimit : 0
+        }
+        
+        var hasEarnedBonus: Bool {
+            isMatched && bonusTimeRemaining > 0
+        }
+        
+        var isConsumingBonusTime: Bool {
+            isFaceUp && !isMatched && bonusTimeRemaining > 0
+        }
+        
+        private mutating func startUsingBonusTime() {
+            if isConsumingBonusTime, lastFaceUpDate == nil {
+                lastFaceUpDate = Date()
+            }
+        }
+        
+        private mutating func stopUsingBonusTime() {
+            pastFaceUpTime = faceUpTime
+            self.lastFaceUpDate = nil
+        }
     }
+    
     
 }
