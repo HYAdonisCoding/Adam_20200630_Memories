@@ -56,13 +56,17 @@ struct MemoryGame<CardContent> where CardContent: Equatable {
         var isFaceUp: Bool = false {
             didSet {
                 if isFaceUp {
-                    
+                    startUsingBonusTime()
                 } else {
-                    
+                    stopUsingBonusTime()
                 }
             }
         }
-        var isMatched: Bool = false
+        var isMatched: Bool = false {
+            didSet {
+                stopUsingBonusTime()
+            }
+        }
         var content: CardContent
         
         
