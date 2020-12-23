@@ -127,9 +127,9 @@
 		6696CDFC25709CC1003E9166 /* Adam_20201127_EmojiArt */ = {
 			isa = PBXGroup;
 			children = (
+				66EFBE102570A6B800CAC5BD /* EmojiArt.swift */,
 				6696CE0C25709CF7003E9166 /* EmojiArtDocument.swift */,
 				6696CDFF25709CC1003E9166 /* EmojiArtDocumentView.swift */,
-				66EFBE102570A6B800CAC5BD /* EmojiArt.swift */,
 				66EFBE4C2570D11E00CAC5BD /* EmojiArtExtensions.swift */,
 				6696CDFD25709CC1003E9166 /* Adam_20201127_EmojiArtApp.swift */,
 				6696CE0125709CC4003E9166 /* Assets.xcassets */,

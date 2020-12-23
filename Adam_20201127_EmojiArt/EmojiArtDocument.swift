@@ -12,7 +12,21 @@ class EmojiArtDocument: ObservableObject {
     
     static let palette: String = "😈🐶🦖🐢🦟🐝🐳🌲🌍🌈🔥🍎🌽"
     
-    @Published private var emojiArt: EmojiArt = EmojiArt()
+    //@Published //workaround for property observer problem with property warppers
+    private var emojiArt: EmojiArt = EmojiArt() {
+        willSet {
+            objectWillChange.send()
+        }
+        didSet {
+//            print("new json = \(emojiArt.json?.utf8 ?? "nil")")
+            UserDefaults.standard.setValue(emojiArt.json, forKey: EmojiArtDocument.untitled)
+        }
+    }
+    private static let untitled = "EmojiArtDocument.Untitled"
+    init() {
+        emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: EmojiArtDocument.untitled)) ?? EmojiArt()
+        fetchBackgroundImageData()
+    }
     
     @Published private(set) var backgroundImage: UIImage?
     
@@ -46,17 +60,31 @@ class EmojiArtDocument: ObservableObject {
     private func fetchBackgroundImageData() {
         if let url = self.emojiArt.backgroundURL {
             backgroundImage = nil
-            DispatchQueue.global(qos: .userInitiated).async {
-                if let imageData = try? Data(contentsOf: url) {
-                    DispatchQueue.main.async {
-                        if url == self.emojiArt.backgroundURL {
-                            self.backgroundImage = UIImage(data: imageData)
-                        }
+            let task = URLSession.shared.dataTask(with: url) {(data, response, error) in
+                guard let imageData = data else {
+                    print("no data back")
+                    return
+                }
+                // maybe try dispatch to main
+                DispatchQueue.main.async {
+                    if url == self.emojiArt.backgroundURL {
+                        self.backgroundImage = UIImage(data: imageData)
                     }
                 }
             }
-
+            task.resume()
         }
+//            DispatchQueue.global(qos: .userInitiated).async {
+//                if let imageData = try? Data(contentsOf: url) {
+//                    DispatchQueue.main.async {
+//                        if url == self.emojiArt.backgroundURL {
+//                            self.backgroundImage = UIImage(data: imageData)
+//                        }
+//                    }
+//                }
+//            }
+//
+//        }
     }
 }
 
